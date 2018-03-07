@@ -3,7 +3,51 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+var module = angular.module('annoyingApp', ['ionic'])
+
+// http://angularjstutorial.blogspot.ca/2012/12/angularjs-with-input-file-directive.html#.WqB10ujwbIU
+// use this to fix the problem where you can't bind an input that accepts files
+// -------------------------------------------------------------------
+module.directive('file', function(){
+  return {
+      scope: {
+          file: '='
+      },
+      link: function(scope, el, attrs){
+          el.bind('change', function(event){
+              var files = event.target.files;
+              scope.file = files[0] ? files[0] : undefined;
+              scope.$apply();
+          });
+      }
+  };
+});
+// -------------------------------------------------------------------
+
+module.controller('setupFormCtrl', function($scope, $http) {
+  $scope.model = {};
+  $scope.model.isTimerSet = false;
+  $scope.model.timerStatus = "Timer is off!";
+
+  $scope.start = function() {
+    $scope.model.timerStatus = "Timer is set!";
+    $scope.model.isTimerSet = true;
+  };
+
+  $scope.stop = function() {
+    $scope.model.timerStatus = "Timer is off!";
+    $scope.model.isTimerSet = false;
+  };
+
+  $scope.isTimerSet = function() {
+    if (!$scope.model.isTimerSet) {
+      return "red";
+    }
+    else {
+      return "green";
+    }
+  }
+})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

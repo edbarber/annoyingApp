@@ -1,1 +1,33 @@
 /* Empty. Add your own CSS if you like */
+
+button {
+    min-width: 20%;
+}
+
+/* use padding because it won't work if margin is set to auto otherwise */
+img {
+    padding: 5%;
+}
+
+button {
+    margin: 5%;
+}
+
+input, label {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.align-center-horizontally {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
