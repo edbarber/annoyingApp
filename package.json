@@ -1,7 +1,7 @@
 {
-  "name": "annoyingApp",
+  "name": "Annoying App",
   "version": "0.0.1",
-  "description": "An Ionic project",
+  "description": "The purpose of this project is about humorously annoying people. The main idea of the project is to have a start and end time between when a given (annoying) sound will play randomly between those two times. There will also be a button to enable or disable the timer.",
   "devDependencies": {
     "gulp": "^3.5.6",
     "gulp-clean-css": "^3.7.0",
