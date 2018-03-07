@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.ionic.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>annoyingApp</name>
-    <description>An awesome Ionic/Cordova app.</description>
+    <name>Annoying App</name>
+    <description>The purpose of this project is about humorously annoying people. The main idea of the project is to have a start and end time between when a given (annoying) sound will play randomly between those two times. There will also be a button to enable or disable the timer.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
     <content src="index.html" />
     <access origin="*" />
