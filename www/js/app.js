@@ -5,6 +5,11 @@
 // the 2nd parameter is an array of 'requires'
 var module = angular.module('annoyingApp', ['ionic'])
 
+var reader = new FileReader();
+var isPlaying = false;
+var error = false;
+var currentSound = undefined;
+
 // http://angularjstutorial.blogspot.ca/2012/12/angularjs-with-input-file-directive.html#.WqB10ujwbIU
 // use this to fix the problem where you can't bind an input that accepts files
 // -------------------------------------------------------------------
@@ -14,11 +19,19 @@ module.directive('file', function(){
           file: '='
       },
       link: function(scope, el, attrs){
-          el.bind('change', function(event){
-              var files = event.target.files;
-              scope.file = files[0] ? files[0] : undefined;
-              scope.$apply();
-          });
+        el.bind('change', function(event) {
+          var files = event.target.files;
+          scope.file = files[0] ? files[0] : undefined;
+
+          if (scope.file == undefined) {
+            error = true;
+            return;
+          }
+
+          error = scope.file.type == "audio/wav" || scope.file.type == "audio/mp3" ? false : true;
+          
+          scope.$apply();
+        });
       }
   };
 });
@@ -29,18 +42,58 @@ module.controller('setupFormCtrl', function($scope, $http) {
   $scope.model.isTimerSet = false;
   $scope.model.timerStatus = "Timer is off!";
 
+  reader.onload = function(e) {
+    if (isPlaying) {
+      var soundSrc = e.target.result;
+      currentSound = new Audio(soundSrc);
+      
+      currentSound.play();
+    }
+    else if (currentSound != undefined) {
+      // a bit of a hack fix to force the sound off as stop refuses to work
+      currentSound.pause();
+      currentSound.currentTime = 0; 
+    }
+  }
+
+  function PlaySound(sound) {
+    if (sound != undefined) {
+      // in case sound is playing
+      StopSound(sound);
+
+      isPlaying = true;
+      reader.readAsDataURL(sound);
+    }
+  }
+
+  function StopSound(sound) {
+    if (sound != undefined) {
+      isPlaying = false;
+      reader.readAsDataURL(sound);
+    }
+  }
+
   $scope.start = function() {
+    if (error || $scope.model.annoyingSound == undefined) {
+      $scope.model.timerStatus = "Please specify a valid file!";
+      return;
+    }
+    
     $scope.model.timerStatus = "Timer is set!";
     $scope.model.isTimerSet = true;
+
+    PlaySound($scope.model.annoyingSound);
   };
 
   $scope.stop = function() {
     $scope.model.timerStatus = "Timer is off!";
     $scope.model.isTimerSet = false;
+
+    StopSound($scope.model.annoyingSound);
   };
 
   $scope.isTimerSet = function() {
-    if (!$scope.model.isTimerSet) {
+    if (!$scope.model.isTimerSet || error) {
       return "red";
     }
     else {
