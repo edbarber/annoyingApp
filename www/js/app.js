@@ -15,8 +15,8 @@ module.directive('file', function(){
       },
       link: function(scope, el, attrs){
           el.bind('change', function(event){
-              var files = event.target.files;
-              alert(files);
+              /*var files = event.target.files;
+              alert(files);*/
               /*scope.file = files[0] ? files[0] : undefined;
               alert(scope.file);
               scope.$apply();*/
