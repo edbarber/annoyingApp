@@ -42,7 +42,7 @@
         <p>Select a start time and an end time to play a given sound file randomly between those times.</p>
         <img src="img/alarm_clock_10-266x300.png" class="align-center-horizontally" alt="alarm clock going off">
         <form ng-controller="setupFormCtrl">
-          <input class="align-center-horizontally" type="file" id="file-upload" accept="audio/*" data-file="model.annoyingSound">
+          <input class="align-center-horizontally" type="file" accept="audio/*" data-file="model.annoyingSound">
           <div class="align-center-horizontally">
             <label for="start-time">Start Time:&nbsp;</label>
             <input type="time" id="start-time" ng-model="model.startTime">
