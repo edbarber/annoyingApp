@@ -8,22 +8,22 @@ var module = angular.module('annoyingApp', ['ionic'])
 // http://angularjstutorial.blogspot.ca/2012/12/angularjs-with-input-file-directive.html#.WqB10ujwbIU
 // use this to fix the problem where you can't bind an input that accepts files
 // -------------------------------------------------------------------
-module.directive('file', function(){
+/*module.directive('file', function(){
   return {
       scope: {
           file: '='
       },
       link: function(scope, el, attrs){
           el.bind('change', function(event){
-              /*var files = event.target.files;
-              alert(files);*/
-              /*scope.file = files[0] ? files[0] : undefined;
+              var files = event.target.files;
+              alert(files);
+              scope.file = files[0] ? files[0] : undefined;
               alert(scope.file);
-              scope.$apply();*/
+              scope.$apply();
           });
       }
   };
-});
+});*/
 // -------------------------------------------------------------------
 
 module.controller('setupFormCtrl', function($scope, $http) {
