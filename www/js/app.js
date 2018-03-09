@@ -17,9 +17,9 @@ module.directive('file', function(){
           el.bind('change', function(event){
               var files = event.target.files;
               alert(files);
-              scope.file = files[0] ? files[0] : undefined;
+              /*scope.file = files[0] ? files[0] : undefined;
               alert(scope.file);
-              scope.$apply();
+              scope.$apply();*/
           });
       }
   };
