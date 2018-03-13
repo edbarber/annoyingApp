@@ -5,10 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 var module = angular.module('annoyingApp', ['ionic'])
 
-var reader = new FileReader();
-var isPlaying = false;
 var error = false;
-var currentSound = undefined;
 
 // http://angularjstutorial.blogspot.ca/2012/12/angularjs-with-input-file-directive.html#.WqB10ujwbIU
 // use this to fix the problem where you can't bind an input that accepts files
@@ -41,6 +38,10 @@ module.controller('setupFormCtrl', function($scope, $http) {
   $scope.model = {};
   $scope.model.isTimerSet = false;
   $scope.model.timerStatus = "Timer is off!";
+
+  var reader = new FileReader();
+  var isPlaying = false;
+  var currentSound = undefined;
 
   reader.onload = function(e) {
     if (isPlaying) {
