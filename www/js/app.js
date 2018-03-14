@@ -1,3 +1,4 @@
+
 // Ionic Starter App
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
@@ -39,22 +40,27 @@ module.controller('setupFormCtrl', function($scope, $http) {
   $scope.model.isTimerSet = false;
   $scope.model.timerStatus = "Timer is off!";
 
-  var reader = new FileReader();
+  var reader = registerReader();
   var isPlaying = false;
   var currentSound = undefined;
 
-  reader.onload = function(e) {
-    if (isPlaying) {
-      var soundSrc = e.target.result;
-      currentSound = new Audio(soundSrc);
-      
-      currentSound.play();
+  function registerReader() {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      if (isPlaying) {
+        var soundSrc = e.target.result;
+        currentSound = new Audio(soundSrc);
+        
+        currentSound.play();
+      }
+      else if (currentSound != undefined) {
+        // a bit of a hack fix to force the sound off as stop refuses to work
+        currentSound.pause();
+        currentSound.currentTime = 0; 
+      }
     }
-    else if (currentSound != undefined) {
-      // a bit of a hack fix to force the sound off as stop refuses to work
-      currentSound.pause();
-      currentSound.currentTime = 0; 
-    }
+
+    return reader;
   }
 
   function PlaySound(sound) {
@@ -63,7 +69,9 @@ module.controller('setupFormCtrl', function($scope, $http) {
       StopSound(sound);
 
       isPlaying = true;
-      reader.readAsDataURL(sound);
+      reader = registerReader();
+      
+      //reader.readAsDataURL(sound);
     }
   }
 
