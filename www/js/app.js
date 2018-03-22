@@ -27,7 +27,6 @@ module.directive('file', function(){
           }
 
           error = scope.file.type == "audio/wav" || scope.file.type == "audio/mp3" ? false : true;
-          
           scope.$apply();
         });
       }
@@ -35,14 +34,15 @@ module.directive('file', function(){
 });
 // -------------------------------------------------------------------
 
-module.controller('setupFormCtrl', function($scope, $http) {
+module.controller('setupFormCtrl', function($scope, $http) {  
   $scope.model = {};
-  $scope.model.isTimerSet = false;
   $scope.model.timerStatus = "Timer is off!";
 
   var reader = registerReader();
   var isPlaying = false;
   var currentSound = undefined;
+  var timeoutHandle = undefined;
+  var bTimerSet = false;
 
   function registerReader() {
     var reader = new FileReader();
@@ -52,6 +52,8 @@ module.controller('setupFormCtrl', function($scope, $http) {
         currentSound = new Audio(soundSrc);
         
         currentSound.play();
+        stopTimer();
+        $scope.$apply();
       }
       else if (currentSound != undefined) {
         // a bit of a hack fix to force the sound off as stop refuses to work
@@ -63,46 +65,107 @@ module.controller('setupFormCtrl', function($scope, $http) {
     return reader;
   }
 
-  function PlaySound(sound) {
-    if (sound != undefined) {
-      // in case sound is playing
-      StopSound(sound);
-
-      isPlaying = true;
-      reader = registerReader();
-      
-      //reader.readAsDataURL(sound);
-    }
-  }
-
-  function StopSound(sound) {
+  function stopSound(sound) {
     if (sound != undefined) {
       isPlaying = false;
       reader.readAsDataURL(sound);
     }
   }
 
+  function cancelTimer() {
+    if (timeoutHandle != undefined) {
+      clearTimeout(timeoutHandle);
+    }
+  }
+
+  function calculateMilliseconds(startTime, endTime) {
+    return (endTime - startTime) / 1000 * 1000;
+  }
+
+  function checkAppropriateTime(startTime, endTime) {
+    if (startTime == undefined || endTime == undefined) {
+      return false;
+    }
+
+    var currDate = new Date();
+    startTime = new Date(currDate.getFullYear(), currDate.getMonth(), currDate.getDate(), 
+      startTime.getHours(), startTime.getMinutes(), startTime.getSeconds(), 
+      startTime.getMilliseconds());
+    endTime = new Date(currDate.getFullYear(), currDate.getMonth(), currDate.getDate(), 
+      endTime.getHours(), endTime.getMinutes(), endTime.getSeconds(), 
+      endTime.getMilliseconds());
+
+    if (currDate > startTime || currDate > endTime)
+    {
+      return false;
+    }
+
+    return true;
+  }
+
   $scope.start = function() {
     if (error || $scope.model.annoyingSound == undefined) {
+      stopTimer();
       $scope.model.timerStatus = "Please specify a valid file!";
+      
       return;
     }
-    
-    $scope.model.timerStatus = "Timer is set!";
-    $scope.model.isTimerSet = true;
 
-    PlaySound($scope.model.annoyingSound);
+    var startTime = $scope.model.startTime;
+    var endTime = $scope.model.endTime;
+    
+    if (!checkAppropriateTime(startTime, endTime)) {
+      stopTimer();
+      $scope.model.timerStatus = "Please specify a start and end time greater than the current time!";
+
+      return;
+    }
+
+    $scope.model.timerStatus = "Timer is set!";
+    bTimerSet = true;
+
+    cancelTimer();      // make sure we don't have leaked timeout handlers
+
+    // a bit of a "hack" fix to force the date so we don't have incorrect years and whatnot
+    // ------------------------------------------------------------------
+    var tempCurrDate = new Date();
+    var currDate = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate(), tempCurrDate.getHours(), tempCurrDate.getMinutes(), 
+      tempCurrDate.getSeconds(), tempCurrDate.getMilliseconds());
+    // ------------------------------------------------------------------
+    
+    var millisecDiff = Math.random() * 
+      calculateMilliseconds(startTime, endTime) +
+      calculateMilliseconds(currDate, startTime);
+
+    timeoutHandle = setTimeout(function() {
+      if (error || $scope.model.annoyingSound == undefined) {
+        $scope.model.timerStatus = "Please specify a valid file!";
+        $scope.$apply();
+        
+        return; // don't bother executing the rest if sound doesn't exist
+      }
+      
+      stopSound($scope.model.annoyingSound);       // in case sound is playing
+
+      isPlaying = true;
+      reader = registerReader();
+    }, millisecDiff);
   };
 
   $scope.stop = function() {
-    $scope.model.timerStatus = "Timer is off!";
-    $scope.model.isTimerSet = false;
-
-    StopSound($scope.model.annoyingSound);
+    stopTimer();
+    stopSound($scope.model.annoyingSound);
   };
 
+  function stopTimer() {
+    $scope.model.timerStatus = "Timer is off!";
+    bTimerSet = false;
+
+    cancelTimer();
+  }
+
   $scope.isTimerSet = function() {
-    if (!$scope.model.isTimerSet || error) {
+    if (!bTimerSet || error) {
       return "red";
     }
     else {
