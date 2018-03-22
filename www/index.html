@@ -49,7 +49,7 @@
             <label for="end-time">End Time:&nbsp;</label>
             <input type="time" id="end-time" ng-model="model.endTime"><br>
           </div>
-          <p ng-class="isTimerSet()" class="align-center-horizontally">{{model.timerStatus}}</p>
+          <p ng-class="timerStatusColor()" class="align-center-horizontally">{{model.timerStatus}}</p>
           <div class="align-center-horizontally">
             <button class="list-button" id="btnStart" ng-click="start()">Start</li>
             <button class="list-button" id="btnStop" ng-click="stop()">Stop</li>

@@ -11,12 +11,12 @@ var error = false;
 // http://angularjstutorial.blogspot.ca/2012/12/angularjs-with-input-file-directive.html#.WqB10ujwbIU
 // use this to fix the problem where you can't bind an input that accepts files
 // -------------------------------------------------------------------
-module.directive('file', function(){
+module.directive('file', function() {
   return {
       scope: {
           file: '='
       },
-      link: function(scope, el, attrs){
+      link: function(scope, el, attrs) {
         el.bind('change', function(event) {
           var files = event.target.files;
           scope.file = files[0] ? files[0] : undefined;
@@ -42,7 +42,7 @@ module.controller('setupFormCtrl', function($scope, $http) {
   var isPlaying = false;
   var currentSound = undefined;
   var timeoutHandle = undefined;
-  var bTimerSet = false;
+  var isTimerSet = false;
 
   function registerReader() {
     var reader = new FileReader();
@@ -72,7 +72,7 @@ module.controller('setupFormCtrl', function($scope, $http) {
     }
   }
 
-  function cancelTimer() {
+  function cancelScheduledSound() {
     if (timeoutHandle != undefined) {
       clearTimeout(timeoutHandle);
     }
@@ -95,8 +95,7 @@ module.controller('setupFormCtrl', function($scope, $http) {
       endTime.getHours(), endTime.getMinutes(), endTime.getSeconds(), 
       endTime.getMilliseconds());
 
-    if (currDate > startTime || currDate > endTime)
-    {
+    if (currDate > startTime || currDate > endTime) {
       return false;
     }
 
@@ -122,9 +121,9 @@ module.controller('setupFormCtrl', function($scope, $http) {
     }
 
     $scope.model.timerStatus = "Timer is set!";
-    bTimerSet = true;
+    isTimerSet = true;
 
-    cancelTimer();      // make sure we don't have leaked timeout handlers
+    cancelScheduledSound();      // make sure we don't have leaked timeout handlers
 
     // a bit of a "hack" fix to force the date so we don't have incorrect years and whatnot
     // ------------------------------------------------------------------
@@ -159,13 +158,13 @@ module.controller('setupFormCtrl', function($scope, $http) {
 
   function stopTimer() {
     $scope.model.timerStatus = "Timer is off!";
-    bTimerSet = false;
+    isTimerSet = false;
 
-    cancelTimer();
+    cancelScheduledSound();
   }
 
-  $scope.isTimerSet = function() {
-    if (!bTimerSet || error) {
+  $scope.timerStatusColor = function() {
+    if (!isTimerSet || error) {
       return "red";
     }
     else {
